@@ -1,0 +1,4 @@
+server:
+  max-http-header-size: 20KB
+  shutdown: graceful
+  port: 9200
