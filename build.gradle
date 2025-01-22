@@ -11,6 +11,7 @@ repositories {
 // Optional: Customize JAR name
 bootJar {
     archiveFileName = 'TAFDataStore.jar'
+    mainClass = 'com.acme.springbootbootstrapproject.SpringBootBootstrapProjectApplication' // Specify main class here
 }
 
 dependencies {
@@ -22,10 +23,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-springBoot {
-    mainClass = 'com.acme.springbootbootstrapproject.SpringBootBootstrapProjectApplication' // Replace with your main class
 }
 
 group = 'com.acme'
