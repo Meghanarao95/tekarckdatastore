@@ -5,8 +5,7 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
-    maven { url = uri('https://repo.maven.apache.org/maven2/') }
+    mavenCentral()
 }
 
 dependencies {
@@ -35,18 +34,4 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
-}
-
-publishing {
-    publications {
-        create('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            name = "MyRepo"
-            url = uri("https://repo.maven.apache.org/maven2/")
-        }
-    }
 }
