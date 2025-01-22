@@ -4,8 +4,8 @@ phases:
   pre_build:
     commands:
       - echo logging into Docker Hub...
-      - DOCKER_PASSWORD=meghanadixit95
-      - DOCKER_USERNAME=Meghana@95
+      - DOCKER_PASSWORD=Meghana@95
+      - DOCKER_USERNAME=meghanadixit95
       - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
       - echo Logging in to Amazon ECR...
       - aws --version
