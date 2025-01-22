@@ -26,12 +26,14 @@ phases:
       - IMAGE_REPO_NAME=tekarch-datastore
       - IMAGE_TAG=latest
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker images  # Add this line to check if the image is built successfully
 
   post_build:
     commands:
       - echo Tagging the Docker image...
       - echo post-build img-repo $IMAGE_REPO_NAME
       - echo post-build accID $AWS_ACCOUNT_ID and region $AWS_REGION
+      - docker images  # Add this line to verify if the image exists before tagging
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
       - echo pushing the Docker image to AWS ECR...
       - docker push $REPOSITORY_URI:latest
