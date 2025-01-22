@@ -17,6 +17,8 @@ phases:
       - echo "Generating commit hash and image tag..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) # Extract short commit hash
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}') # Generate image tag from build ID
+      - echo "Image tag is $IMAGE_TAG"  # Display the image tag
+
 
     build:
       commands:
@@ -24,6 +26,7 @@ phases:
         - echo "Building the Docker image..."
         - docker build -t $REPOSITORY_URI:latest . # Build Docker image with the "latest" tag
         - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG # Tag the image with the specific build tag
+
 
     post_build:
       commands:
