@@ -3,54 +3,41 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo logging into Docker Hub...
       - DOCKER_PASSWORD=Meghana@95
-      - DOCKER_USERNAME=meghanadixit95
-      - echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
-      - echo Logging in to Amazon ECR...
-      - aws --version
-      - AWS_REGION=us-east-1
-      - AWS_ACCOUNT_ID=324037300860
-      - echo accountID- $AWS_ACCOUNT_ID
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/tekarch-datastore
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
-      - echo Granting execution permissions to Gradle wrapper...
+      - DOCKER_USERNAME=jmeghanadixit95
+      - echo "Granting execute permissions to gradlew..."
       - chmod +x gradlew
-      - ./gradlew clean build --warning-mode all
+      - echo "Cleaning and building the Gradle project..."
+      - ./gradlew clean build # Clean and build the Gradle project
+      - echo "Logging in to Amazon ECR..."
+      - aws --version # Verify AWS CLI version
+      - REPOSITORY_URI=.dkr.ecr.us-east-1.amazonaws.com/tekarch-datastore
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo "Generating commit hash and image tag..."
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) # Extract short commit hash
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}') # Generate image tag from build ID
 
+    build:
+      commands:
+        - echo "Build started on `date`"
+        - echo "Building the Docker image..."
+        - docker build -t $REPOSITORY_URI:latest . # Build Docker image with the "latest" tag
+        - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG # Tag the image with the specific build tag
 
-  build:
-    commands:
-      - echo Build started on date
-      - echo Building the Docker image...
-      - IMAGE_REPO_NAME=tekarch-datastore
-      - IMAGE_TAG=latest
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - docker images  # Add this line to check if the image is built successfully
-
-  post_build:
-    commands:
-      - echo Tagging the Docker image...
-      - echo post-build img-repo $IMAGE_REPO_NAME
-      - echo post-build accID $AWS_ACCOUNT_ID and region $AWS_REGION
-      - docker images  # Add this line to verify if the image exists before tagging
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-      - echo pushing the Docker image to AWS ECR...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
-      - printf '[{"name":"taf-userservice-service","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - echo Writing image definitions file...
-      # add your container name
-      - DOCKER_CONTAINER_NAME=tekarch-datastore
-      - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - echo $DOCKER_CONTAINER_NAME
-      - echo build process completed successfully.
-      - echo printing imagedefinitions.json
-      - cat imagedefinitions.json
+    post_build:
+      commands:
+        - echo "Build completed on `date`"
+        - echo "Pushing the Docker images..."
+        - docker push $REPOSITORY_URI:latest # Push the "latest" tag to ECR
+        - docker push $REPOSITORY_URI:$IMAGE_TAG # Push the build-specific tag to ECR
+        - echo "Writing image definitions file..."
+        - DOCKER_CONTAINER_NAME=tekarch-datastore# Specify container name
+        - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:
+        - $IMAGE_TAG > imagedefinitions.json # Write final image definitions
+        - echo "Printing imagedefinitions.json..."
+        - cat imagedefinitions.json # Display the contents of the image definitions file
 
 artifacts:
   files:
-    - imagedefinitions.json
-    - build/libs/*.jar
-discard-paths: yes
+    - imagedefinitions.json # Include the image definitions for deployment
+    - build/libs/*.jar # Include the compiled JAR as a build artifact
