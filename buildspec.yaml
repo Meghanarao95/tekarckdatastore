@@ -3,15 +3,16 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - AWS_ACCOUNT_ID=324037300860
       - DOCKER_PASSWORD=Meghana@95
-      - DOCKER_USERNAME=jmeghanadixit95
+      - DOCKER_USERNAME=meghanadixit95
       - echo "Granting execute permissions to gradlew..."
       - chmod +x gradlew
       - echo "Cleaning and building the Gradle project..."
       - ./gradlew clean build # Clean and build the Gradle project
       - echo "Logging in to Amazon ECR..."
       - aws --version # Verify AWS CLI version
-      - REPOSITORY_URI=.dkr.ecr.us-east-1.amazonaws.com/tekarch-datastore
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/tekarch-datastore
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
       - echo "Generating commit hash and image tag..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) # Extract short commit hash
