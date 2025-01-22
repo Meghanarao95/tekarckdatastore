@@ -1,11 +1,16 @@
 plugins {
-    id 'org.springframework.boot' version '3.0.5' // Match your Spring Boot version
+    id 'org.springframework.boot' version '3.0.5'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
 }
 
 repositories {
     mavenCentral()
+}
+
+// Optional: Customize JAR name
+bootJar {
+    archiveFileName = 'TAFDataStore.jar'
 }
 
 dependencies {
@@ -17,6 +22,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+springBoot {
+    mainClass = 'com.acme.MainApplication' // Replace with your main class
 }
 
 group = 'com.acme'
