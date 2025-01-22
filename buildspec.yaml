@@ -12,7 +12,7 @@ phases:
       - ./gradlew clean build # Clean and build the Gradle project
       - echo "Logging in to Amazon ECR..."
       - aws --version # Verify AWS CLI version
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/tekarch-datastore
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/taf-datastore
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
       - echo "Generating commit hash and image tag..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) # Extract short commit hash
@@ -35,7 +35,7 @@ phases:
         - docker push $REPOSITORY_URI:latest # Push the "latest" tag to ECR
         - docker push $REPOSITORY_URI:$IMAGE_TAG # Push the build-specific tag to ECR
         - echo "Writing image definitions file..."
-        - DOCKER_CONTAINER_NAME=tekarch-datastore# Specify container name
+        - DOCKER_CONTAINER_NAME=taf-datastore# Specify container name
         - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:
         - $IMAGE_TAG > imagedefinitions.json # Write final image definitions
         - echo "Printing imagedefinitions.json..."

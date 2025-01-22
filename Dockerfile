@@ -7,7 +7,7 @@ WORKDIR /app
 COPY build/libs/TAFDataStore.jar app.jar
 
 # Expose the port your application runs on (optional but recommended)
-EXPOSE 8081
+EXPOSE 9200
 
 # Set the command to run the JAR file
 ENTRYPOINT ["java", "-jar", "app.jar"]
