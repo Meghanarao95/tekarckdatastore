@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.acme.springbootbootstrapproject.repository")
 @Import(AppConfig.class)
+
 public class SpringBootBootstrapProjectApplication {
 
 	public static void main(String[] args) {
