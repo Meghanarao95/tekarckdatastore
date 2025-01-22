@@ -1,7 +1,8 @@
-plugins {
+pplugins {
     id 'org.springframework.boot' version '3.0.5' // Match your Spring Boot version
     id 'io.spring.dependency-management' version '1.1.0'
     id 'java'
+    id 'maven-publish' // Apply maven-publish plugin for publishing
 }
 
 repositories {
@@ -37,10 +38,17 @@ tasks.withType(Javadoc).configureEach {
     options.encoding = 'UTF-8'
 }
 
+// Adjusting publishing setup
 publishing {
     publications {
-        create('maven', MavenPublication) {
+        create('mavenJava', MavenPublication) {
             from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "MyRepo"
+            url = uri("https://repo.maven.apache.org/maven2/")
         }
     }
 }
