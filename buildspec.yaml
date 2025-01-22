@@ -17,6 +17,7 @@ phases:
       - echo Granting execution permissions to Gradle wrapper...
       - chmod +x gradlew
       - ./gradlew clean build --warning-mode all
+      - ls build/libs  # List the files in build/libs to ensure JAR file exists
 
 
   build:
